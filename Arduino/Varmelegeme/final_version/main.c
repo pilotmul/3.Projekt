@@ -1,7 +1,11 @@
 #include "temperatureRegulator.h"
+#include <stdio.h>
 
 int main(void) {
     initTempRegulator(); // temp regulator set up
-    changeTemperatureGoal(50); //set temperatur goal
-    regulateTemperatureContinuous(); //regulation loop
+    float input;
+    printf("input desired temperature: ");
+    scanf("%f", &input);
+
+    setTemperatureGoal(input);
 }

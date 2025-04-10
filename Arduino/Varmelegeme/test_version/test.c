@@ -2,6 +2,6 @@
 
 int main(void) {
     initTempRegulator();
-    changeTemperatureGoal(50);
+    setTemperatureGoal(50);
     regulateTemperatureContinuous();
 }

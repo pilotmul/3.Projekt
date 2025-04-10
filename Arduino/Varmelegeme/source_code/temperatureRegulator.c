@@ -29,7 +29,7 @@ void initTempRegulator(){
     scd30_send_cmd(0x0010, 0x0000, 1); // starts continous sensor reading
 }
 
-void changeTemperatureGoal(float goal){
+void setTemperatureGoal(float goal){
     PIDControl_changeSetPoint(setPoint); //sets the temperature goal
 }
 

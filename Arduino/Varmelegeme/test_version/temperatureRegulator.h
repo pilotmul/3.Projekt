@@ -28,7 +28,7 @@ void initTempRegulator();
 void regulateTemperatureContinuous(); //locking loop that controls the temperature
 void regulateTemperature(float temp); //regulates controller once, based on passed temp
 void printTemp(); //Prints last read temp via UART
-void changeTemperatureGoal(float goal);
+void setTemperatureGoal(float goal);
 
 /**** prints PID data, used for debugging  ********/
 void PID_print(float setPoint, float temp, float controlSignal, float proportionalPart, float integralPart, float time);
