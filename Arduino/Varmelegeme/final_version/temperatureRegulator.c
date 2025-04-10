@@ -54,14 +54,13 @@ void regulateTemperatureContinuous(){
        // adjust heating
        controlSignal = PIDControl_doStep(temp, &proportionalPart, &integralPart, &derivativePart);
        setPW((int)controlSignal); //pass control siganl to PWM
-       PID_print(setPoint, temp, controlSignal, proportionalPart, integralPart, time); //print debugging data
-       time += 0.33;
        _delay_ms(sampleWaitTimeInMilliseconds); //delay between readings
     }
 }
 
 /********* regulates controller once, non locking *********/
-void regulateTemperature(float temp){
+void regulateTemperature(float currentTemp){
+    temp = currentTemp;
     //Calculate error between setpoint and current temp
    float error = setPoint - temp;
 
@@ -81,18 +80,12 @@ void printTemp(){
     SendString(float2Char(temp, outputBuffer));// skriv temp til UART
 }
 
-void PID_print(float setPoint, float temp, float controlSignal, float proportionalPart, float integralPart, float time){
+void PID_print(){
     //SendString("Setpoint, Temp, ControlSignal, ProportionalPart, IntegralPart, Time\n\r");
     SendString(float2Char(setPoint, outputBuffer));
     SendString(",");
     SendString(float2Char(temp, outputBuffer));
     SendString(",");
     SendString(float2Char(controlSignal, outputBuffer));
-    SendString(",");
-    SendString(float2Char(proportionalPart, outputBuffer));
-    SendString(",");
-    SendString(float2Char(integralPart, outputBuffer));
-    SendString(",");
-    SendString(float2Char(time, outputBuffer));
     SendString("\n\r");
 }

@@ -60,8 +60,8 @@ void regulateTemperatureContinuous(){
     }
 }
 
-/********* regulates controller once, non locking *********/
-void regulateTemperature(float temp){
+/********* regulates controller once based on current temperature, non locking *********/
+void regulateTemperature(float currentTemp){
     //Calculate error between setpoint and current temp
    float error = setPoint - temp;
 

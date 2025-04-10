@@ -1,4 +1,4 @@
-SOURCES = test.c uart.c PWM.c SCD30.c PIDControl.c temperatureRegulator.c
+SOURCES = main.c uart.c PWM.c SCD30.c PIDControl.c temperatureRegulator.c
 OBJECTS = $(SOURCES:.c=.o)
 ELF_FILE = prog.elf
 HEX_FILE = prog.hex
