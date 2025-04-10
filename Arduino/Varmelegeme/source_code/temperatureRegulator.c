@@ -16,6 +16,7 @@ float integralMax = 3000;
 float integralMin = -3000;
 float controlSignal = 0; //Variable to store control output
 static float setPoint = 50; // temperature goal in degrees celcius
+float time = 0;
 
 void initTempRegulator(){
     InitUART(9600, 8, 1);
@@ -30,7 +31,8 @@ void initTempRegulator(){
 }
 
 void setTemperatureGoal(float goal){
-    PIDControl_changeSetPoint(setPoint); //sets the temperature goal
+    PIDControl_changeSetPoint(goal); //sets the temperature goal
+    setPoint = goal;
 }
 
 /******** locking loop that controls the temperature ********/
@@ -57,7 +59,8 @@ void regulateTemperatureContinuous(){
 }
 
 /********* regulates controller once, non locking *********/
-void regulateTemperature(float temp){
+void regulateTemperature(float currentTemp){
+    temp = currentTemp;
     //Calculate error between setpoint and current temp
    float error = setPoint - temp;
 
@@ -77,18 +80,12 @@ void printTemp(){
     SendString(float2Char(temp, outputBuffer));// skriv temp til UART
 }
 
-void PID_print(float setPoint, float temp, float controlSignal, float proportionalPart, float integralPart, float time){
-    SendString("Setpoint, Temp, ControlSignal, ProportionalPart, IntegralPart, Time\n\r");
+void PID_print(){
+    //SendString("Setpoint, Temp, ControlSignal, ProportionalPart, IntegralPart, Time\n\r");
     SendString(float2Char(setPoint, outputBuffer));
     SendString(",");
     SendString(float2Char(temp, outputBuffer));
     SendString(",");
     SendString(float2Char(controlSignal, outputBuffer));
-    SendString(",");
-    SendString(float2Char(proportionalPart, outputBuffer));
-    SendString(",");
-    SendString(float2Char(integralPart, outputBuffer));
-    SendString(",");
-    SendString(float2Char(time, outputBuffer));
     SendString("\n\r");
 }

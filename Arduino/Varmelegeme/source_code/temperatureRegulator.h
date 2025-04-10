@@ -2,6 +2,8 @@
 /***************************************************************/
 // OBS, der skal være en implimenteret float2char() funktion    /
 // i uart.h for at nogen af print funktionerne virker.          /
+// PWM BRUGER PIN 11                                            /
+// SCD30 sensor bruger SCL(hvid) -> PIN 21, SDA(gul) -> PIN 20  /
 //                                                              /
 // initTempRegulator() skal kaldes i starten af programmet.     /
 //                                                              /
@@ -24,7 +26,7 @@
 
 void initTempRegulator();
 void regulateTemperatureContinuous(); //locking loop that controls the temperature
-void regulateTemperature(float temp); //regulates controller once, based on the current temperature
+void regulateTemperature(float currentTemp); //regulates controller once, based on passed temp
 void printTemp(); //Prints last read temp via UART
 void setTemperatureGoal(float goal);
 
