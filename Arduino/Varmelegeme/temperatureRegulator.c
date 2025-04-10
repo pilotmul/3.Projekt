@@ -16,6 +16,7 @@ float integralMax = 3000;
 float integralMin = -3000;
 float controlSignal = 0; //Variable to store control output
 static float setPoint = 50; // temperature goal in degrees celcius
+float time = 0;
 
 void initTempRegulator(){
     InitUART(9600, 8, 1);
@@ -30,7 +31,8 @@ void initTempRegulator(){
 }
 
 void changeTemperatureGoal(float goal){
-    PIDControl_changeSetPoint(setPoint); //sets the temperature goal
+    PIDControl_changeSetPoint(goal); //sets the temperature goal
+    setPoint = goal;
 }
 
 /******** locking loop that controls the temperature ********/
@@ -52,6 +54,8 @@ void regulateTemperatureContinuous(){
        // adjust heating
        controlSignal = PIDControl_doStep(temp, &proportionalPart, &integralPart, &derivativePart);
        setPW((int)controlSignal); //pass control siganl to PWM
+       PID_print(setPoint, temp, controlSignal, proportionalPart, integralPart, time); //print debugging data
+       time += 0.33;
        _delay_ms(sampleWaitTimeInMilliseconds); //delay between readings
     }
 }
@@ -78,7 +82,7 @@ void printTemp(){
 }
 
 void PID_print(float setPoint, float temp, float controlSignal, float proportionalPart, float integralPart, float time){
-    SendString("Setpoint, Temp, ControlSignal, ProportionalPart, IntegralPart, Time\n\r");
+    //SendString("Setpoint, Temp, ControlSignal, ProportionalPart, IntegralPart, Time\n\r");
     SendString(float2Char(setPoint, outputBuffer));
     SendString(",");
     SendString(float2Char(temp, outputBuffer));

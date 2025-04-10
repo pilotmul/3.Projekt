@@ -48,38 +48,4 @@ void setPW(int pct)
 	else if(pct < 0){
 		OCR1A = 0;
 	}
-	
-
-/*
-	if (currentDC > pct)
-	{
-		inc  = (OCtemp - (ICtemp/100*pct)) / 5;
-		for (int i = 0 ; i < 5; i++)
-		{
-			OCR1A = inc + OCtemp; //set duty-cycle
-			OCtemp -= inc;
-			_delay_ms(100);
-		}
-	}
-	else if (pct == 0)
-	{
-		inc  = (OCtemp - (ICtemp/100*pct)) / 5;
-		for (int i = 0 ; i < 5; i++)
-		{
-			OCR1A = inc + OCtemp; //set duty-cycle
-			OCtemp -= inc;
-			_delay_ms(100);
-		}
-	}
-	else
-	{
-		inc = ((ICtemp/100*pct) - OCtemp) / 5;
-		for (int i = 0 ; i < 5; i++)
-		{
-			OCR1A = OCtemp + inc;
-			OCtemp += inc; //set duty-cycle
-			_delay_ms(100);
-		}
-	}
-*/
 }
