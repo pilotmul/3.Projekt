@@ -5,7 +5,5 @@
  *  Author: bruger
  */ 
 
-void initSensor();
+void TWI_Init();
 
-
-void
