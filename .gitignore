@@ -46,7 +46,11 @@ modules.builtin
 /System.map
 /Module.markers
 Module.symvers
-
+.atsln
+.xml
+.cproj
+/Debug
+/.vs
 #
 # Debian directory (make deb-pkg)
 #

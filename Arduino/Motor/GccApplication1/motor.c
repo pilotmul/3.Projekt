@@ -1,8 +1,8 @@
 #include "motor.h"
 
-// Initialiser Timer1 til 50 Hz PWM på OC1A (PB5)
+// Initialiser Timer1 til 50 Hz PWM pï¿½ OC1A (PB5)
 void servo_init() {
-	DDRB |= (1 << PB5); // Sæt PB5 som output
+	DDRB |= (1 << PB6); // Sï¿½t PB5 som output
 
 	// Fast PWM, mode 14: ICR1 som TOP
 	TCCR1A = (1 << COM1A1) | (1 << WGM11);
