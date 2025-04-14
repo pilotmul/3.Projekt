@@ -11,20 +11,21 @@ void setup_sensors() {
 	//Start ADC and set prescaler to 128
 	ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
 	
-	//__________Init LED pin (pin 10 = PB4 / OC2A on ATmega2560)__________
-	DDRB |= (1 << PB4); // Set PB4 as output
+	//__________Init LED pin__________
+	//Set pin 10 (PB5/OC1A) as output
+	DDRB |= (1 << PB4);
 
-	// Configure Timer2 for Fast PWM, non-inverting mode on OC2A
-	TCCR2A = (1 << COM2A1) | (1 << WGM21) | (1 << WGM20); // Fast PWM, non-inverting on OC2A
-	TCCR2B = (1 << CS21); // Prescaler = 8
+	//Configure Timer1 for Fast PWM, non-inverting mode
+	TCCR1A = (1 << COM1A1) | (1 << WGM11) | (1 << WGM10);
+	TCCR1B = (1 << WGM12) | (1 << CS11); //Prescaler = 8
 
-	// Set duty cycle (50% of 255 = ~128)
-	OCR2A = 128;
+	//Set duty cycle (50% brightness)
+	OCR1A = 512; //50% of 10-bit range (0-1023)
 }
 
-int analogRead() {
+int analogRead(uint8_t channel) {
 	//Choosing ADC-channel and zero the last 3 bits
-	ADMUX = (ADMUX & 0xF8) | (PF4 & 0x07);
+	ADMUX = (ADMUX & 0xF8) | (channel & 0x07);
 	
 	ADCSRA |= (1 << ADSC); //Start conversion
 	while (ADCSRA & (1 << ADSC)); //While converting
@@ -49,7 +50,7 @@ int SetLEDBrightness(int lightReading)
 	
 	int brightness = lightReading / 4; //Roughly converts to 8bit
 	
-	OCR2A = brightness; //Sets LED brightness
+	OCR1A = brightness; //Sets LED brightness
 	
 	int percentage = lightReading/10;
 	

@@ -1,7 +1,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <string.h>
-#include <sensor.h>
+#include "sensor.h"
 
 // === Internt ===
 #define SCD30_ADDR 0x61
@@ -109,4 +109,5 @@ void scd30_read(float *co2, float *temp, float *hum) {
 	*temp = *(float*)&t_raw;
 	*hum = *(float*)&h_raw;
 
+	
 }

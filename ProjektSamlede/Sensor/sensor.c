@@ -1,7 +1,6 @@
 #include <avr/io.h>
-#include <util/delay.h>
 #include <string.h>
-#include <sensor.h>
+#include "sensor.h"
 
 // === Internt ===
 #define SCD30_ADDR 0x61
@@ -63,7 +62,6 @@ static void send_cmd(uint16_t cmd, uint16_t arg, uint8_t use_arg) {
 		TWI_Write(calc_crc(buf));
 	}
 	TWI_Stop();
-	_delay_ms(5);
 }
 
 static uint8_t data_ready(void) {

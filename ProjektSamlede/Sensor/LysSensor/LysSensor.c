@@ -1,10 +1,10 @@
 #include <avr/io.h>
 #include <stdlib.h>
 #include "lysSensor.h"
-#include "uart.h"
 
-void setup_sensors() {
-	InitUART(9600,8,0); //Init uart with correct BAUD
+
+void init_light() 
+{
 	
 	//__________Init ADC__________
 	ADMUX = (1 << REFS0); //Set refrence for ADC to AVcc
