@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Kontrolpanel</title>
+  <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    #tekniker-log {
+      height: 300px; width: 100%; overflow-y: scroll;
+      border: 1px solid #ccc; background: #f9f9f9; padding: 10px;
+      white-space: pre-wrap; margin-bottom: 20px;
+    }
+    label, input, button { margin: 5px 0; display: block; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <h1>Smart Kontrolpanel</h1>
+
+  <h3>Styring</h3>
+  <button onclick="toggleWindow(true)">Åbn vindue</button>
+  <button onclick="toggleWindow(false)">Luk vindue</button>
+
+  <label>Indstil temperatur (°C):</label>
+  <input type="number" id="temp-input" placeholder="f.eks. 22">
+  <button onclick="sendTemp()">Send temperatur</button>
+
+  <label>Indstil lysstyrke (%):</label>
+  <input type="number" id="light-input" placeholder="f.eks. 75">
+  <button onclick="sendLight()">Send lys</button>
+
+  <hr>
+  <h3>Live målinger</h3>
+  <p> Temperatur – Sat: <span id="temp-set">---</span> °C | Målt: <span id="temp-value">---</span> °C</p>
+  <p> Lysstyrke – Sat: <span id="light-set">---</span> % | Målt: <span id="light-value">---</span> %</p>
+  <p> CO₂-niveau: <span id="co2-value">---</span> ppm</p>
+  <p> Fugtighed: <span id="humidity-value">---</span> %</p>
+
+  <hr>
+  <button onclick="toggleTekniker()">Vis teknikermenu</button>
+  <div id="tekniker-box" class="hidden">
+    <h3> Teknikermenu</h3>
+    <button onclick="toggleDataFlow()">Stop/Start datastrøm</button>
+    <div>
+      <button onclick="testData('TEMP')">Test Temperatur</button>
+      <button onclick="testData('LIGHT')">Test Lysstyrke</button>
+      <button onclick="testData('CO2')">Test CO₂</button>
+      <button onclick="testData('HUMIDITY')">Test Fugt</button>
+      <button onclick="testData('WINDOW')">Test Vindue</button>
+    </div>
+    <div>
+      <label><input type="checkbox" id="skip-temp"> Udeluk Temperatur</label>
+      <label><input type="checkbox" id="skip-light"> Udeluk Lysstyrke</label>
+      <label><input type="checkbox" id="skip-co2"> Udeluk CO₂</label>
+      <label><input type="checkbox" id="skip-humidity"> Udeluk Fugt</label>
+      <label><input type="checkbox" id="skip-window"> Udeluk Vindue</label>
+    </div>
+    <pre id="tekniker-log"></pre>
+  </div>
+
+  <script>
+    const socket = io();
+    let teknikVises = false;
+    let dataFlowActive = true;
+    let currentSetTemp = "---";
+    let currentSetLight = "---";
+
+    function toggleWindow(open) {
+      if (!document.getElementById("skip-window").checked) {
+        socket.emit('control', { window: open });
+        logTekniker("SEND -> VINDUE: " + (open ? "OPEN" : "CLOSE"));
+      }
+    }
+
+    function sendTemp() {
+      const temp = document.getElementById('temp-input').value;
+      if (temp && !document.getElementById("skip-temp").checked) {
+        currentSetTemp = temp;
+        document.getElementById("temp-set").textContent = temp;
+        socket.emit('control', { temperature: temp });
+        logTekniker("SEND -> TEMP: " + temp);
+      }
+    }
+
+    function sendLight() {
+      const light = document.getElementById('light-input').value;
+      if (light && !document.getElementById("skip-light").checked) {
+        currentSetLight = light;
+        document.getElementById("light-set").textContent = light;
+        socket.emit('control', { light: light });
+        logTekniker("SEND -> LIGHT: " + light);
+      }
+    }
+
+    function toggleTekniker() {
+      teknikVises = !teknikVises;
+      document.getElementById("tekniker-box").classList.toggle("hidden", !teknikVises);
+    }
+
+    function toggleDataFlow() {
+      dataFlowActive = !dataFlowActive;
+      logTekniker("Datastrøm er nu: " + (dataFlowActive ? "AKTIV" : "STOPPET"));
+    }
+
+    function testData(type) {
+      logTekniker("Udfører test på: " + type);
+      socket.emit('control', { test: type });
+    }
+
+    function logTekniker(msg) {
+      const log = document.getElementById("tekniker-log");
+      const timestamp = new Date().toLocaleTimeString();
+      log.textContent += `[${timestamp}] ${msg}\n`;
+      log.scrollTop = log.scrollHeight;
+    }
+
+    socket.on('temp_update', data => {
+      if (dataFlowActive && !document.getElementById("skip-temp").checked) {
+        document.getElementById("temp-value").textContent = data.value;
+      }
+    });
+
+    socket.on('light_update', data => {
+      if (dataFlowActive && !document.getElementById("skip-light").checked) {
+        document.getElementById("light-value").textContent = data.value;
+      }
+    });
+
+    socket.on('co2_update', data => {
+      if (dataFlowActive && !document.getElementById("skip-co2").checked) {
+        document.getElementById("co2-value").textContent = data.value;
+      }
+    });
+
+    socket.on('humidity_update', data => {
+      if (dataFlowActive && !document.getElementById("skip-humidity").checked) {
+        document.getElementById("humidity-value").textContent = data.value;
+      }
+    });
+
+    socket.on('uart_response', data => {
+      logTekniker("MODTAG <- " + data.response);
+    });
+
+    socket.on('feedback', data => {
+      logTekniker("✔️ Feedback: " + data.status);
+    });
+  </script>
+</body>
+</html>
