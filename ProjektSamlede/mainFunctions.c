@@ -84,21 +84,21 @@ void handleData(int* lightReading, float* temp, float* h2o, float* co2)
 
 void sendData(int* lightReading, float* temp, float* h2o, float* co2)
 {
-	char tempString[20];
+	char String[20];
 
-	// Send temperature
-	dtostrf(*temp, 5, 2, tempString);
-	SendString(tempString);
+	//Send temperature
+	sprintf(String, "%f", *temp);
+	SendString(String);
 
-	// Send light
-	itoa(*lightReading, tempString, 10);
-	SendString(tempString);
+	//Send light
+	sprintf(String, "%f", *lightReading);
+	SendString(String);
 
-	// Send CO2
-	dtostrf(*co2, 6, 2, tempString);
-	SendString(tempString);
+	//Send CO2
+	sprintf(String, "%f", *co2);
+	SendString(String);
 
-	// Send humidity
-	dtostrf(*h2o, 5, 2, tempString);
-	SendString(tempString);
+	//Send humidity
+	sprintf(String, "%f", *h2o);
+	SendString(String);
 }
