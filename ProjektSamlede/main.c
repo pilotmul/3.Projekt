@@ -15,7 +15,7 @@ int main(void)
 {
 	initSystem();
     //Variables_delay_ms(2000);
-	float co2 = 0, temp = 0, h2o = 0;
+	float co2 = 0, temp = 0, h2o = 0, targetTemp = 25;
 	int LEDBrightness = 0;
 	bool windowOpen = false;
 	bool motorAuto = true;
@@ -24,7 +24,7 @@ int main(void)
     int lightReading;
 	
 	
-    setTemperatureGoal(25.0);
+    setTemperatureGoal(targetTemp);
 	close();
 	
     //MAIN LOOP
@@ -35,10 +35,10 @@ int main(void)
         readData(&lightReading, &temp, &h2o, &co2);
 		
         //_____HANDLE_____
-        handleData(&lightReading, &temp, &h2o, &co2, &LEDBrightness);
+        handleData(&lightReading, &temp, &h2o, &co2, &LEDBrightness, &motorAuto, &targetTemp, &lightAuto);
 		
         //_____SEND____
-        sendData(&LEDBrightness, &temp, &h2o, &co2);
+        sendData(&LEDBrightness, &temp, &h2o, &co2, &windowOpen);
 		
 		_delay_ms(500);
 		
