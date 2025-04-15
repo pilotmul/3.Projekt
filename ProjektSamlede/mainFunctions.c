@@ -3,36 +3,51 @@
 #include "Varmelegeme/temperatureRegulator.h"
 #include "Sensor/LysSensor/LysSensor.h"
 #include "uart.h"
+#include <math.h>
 #include <stdio.h>
 
 bool motorAuto = true;
 bool lightAuto = true;
 
-float targetTemp = 50;
+float targetTemp = 21;
 
-void toggleModes(int mode)
+void handleReceived(int val)
 {
-    switch (mode)
+    switch (floor(val/100))
     {
-    case 1: //Toggle motor control mode
-        if(motorAuto)
-        {
-            motorAuto = false;
-            break;
-        }
-        //else
-        motorAuto = true;
+    case 1: //Toggle motor and set mode manual
+        
+        motorAuto = false;
         break;
     
-    case 2: //Toggle light control mode
-        if(lightAuto)
-        {
-            lightAuto = false;
-            break;
-        }
-        //else
-        lightAuto = true;
-        break;
+    case 2: //Toggle motor control mode
+		if(motorAuto)
+		{
+			motorAuto = false;
+			break;
+		}
+		motorAuto = true;
+		break;
+	
+	case 3: //Set target temp
+		targetTemp = val%100;
+		break;
+	
+	case 4: //Toggle light control mode
+		
+		if(lightAuto)
+		{
+			lightAuto = false;
+			break;
+		}
+		//else
+		lightAuto = true;
+		break;
+		
+	case 5: //Set brightness and set mode manual
+		SetLEDBrightness(val%100);
+		lightAuto = false;
+		break;
     
     default:
         break;
@@ -61,7 +76,8 @@ void readData(int* lightReading, float* temp, float* h2o, float* co2)
 
 void handleData(int* lightReading, float* temp, float* h2o, float* co2, int* LEDBrightness)
 {
-   
+   if(motorAuto)
+   {
         if(*temp>targetTemp+3 || *h2o>60.0 || *co2>1000) //Check for value limits
         {
             //Åben vindue
@@ -72,7 +88,7 @@ void handleData(int* lightReading, float* temp, float* h2o, float* co2, int* LED
             //luk vindue
             close();
         }
-   
+   }
 
     //_____LIGHT_____
     if(lightAuto) //Check for auto control mode
