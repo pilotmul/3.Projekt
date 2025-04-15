@@ -92,7 +92,7 @@ void sendData(int* lightReading, float* temp, float* h2o, float* co2)
 	SendString(String);
 
 	//Send light
-	sprintf(String, "%f", *lightReading);
+	sprintf(String, "%d", *lightReading);
 	SendString(String);
 
 	//Send CO2
