@@ -8,7 +8,8 @@
 
 void handleReceived(int val, bool* motorAuto, bool* lightAuto, bool* windowOpen, float* targetTemp)
 {
-    switch (floor(val/100))
+	int swCase = floor(val/100);
+    switch (swCase)
     {
     case 1: //Toggle motor and set mode manual
 	
