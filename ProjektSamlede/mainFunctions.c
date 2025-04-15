@@ -59,7 +59,7 @@ void readData(int* lightReading, float* temp, float* h2o, float* co2)
     
 }
 
-void handleData(int* lightReading, float* temp, float* h2o, float* co2)
+void handleData(int* lightReading, float* temp, float* h2o, float* co2, int* LEDBrightness)
 {
    
         if(*temp>targetTemp+3 || *h2o>60.0 || *co2>1000) //Check for value limits
@@ -77,30 +77,40 @@ void handleData(int* lightReading, float* temp, float* h2o, float* co2)
     //_____LIGHT_____
     if(lightAuto) //Check for auto control mode
     {
-        SetLEDBrightness(*lightReading); //Set brightness
+		*LEDBrightness = SetLEDBrightness(*lightReading); //Set brightness
     }
 
     //_____TEMP_____
     regulateTemperature(*temp);
 }
 
-void sendData(int* lightReading, float* temp, float* h2o, float* co2)
+void sendData(int* lightReading, float* temp, float* h2o, float* co2, int* LEDBrightness)
 {
 	char String[20];
 
 	//Send temperature
+	SendString("\nREADING START\n");
+	SendString("\nTemp\n");
 	sprintf(String, "%f", *temp);
 	SendString(String);
 
 	//Send light
+	SendString("\nAmbient light \n");
 	sprintf(String, "%d", *lightReading);
+	SendString(String);
+	
+	SendString("\nLED Brightness\n");
+	sprintf(String, "%d", *LEDBrightness);
 	SendString(String);
 
 	//Send CO2
+	SendString("\nCo2\n");
 	sprintf(String, "%f", *co2);
 	SendString(String);
 
 	//Send humidity
+	SendString("\nHumidity\n");
 	sprintf(String, "%f", *h2o);
 	SendString(String);
+	SendString("\nREADING END\n");
 }

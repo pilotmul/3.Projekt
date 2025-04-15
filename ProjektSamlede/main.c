@@ -15,6 +15,7 @@ int main(void)
 	initSystem();
     //Variables_delay_ms(2000);
 	float co2 = 0, temp = 0, h2o = 0;
+	int LEDBrightness = 0;
 	
     int lightReading;
 	
@@ -30,12 +31,12 @@ int main(void)
         readData(&lightReading, &temp, &h2o, &co2);
 		
         //_____HANDLE_____
-        handleData(&lightReading, &temp, &h2o, &co2);
+        handleData(&lightReading, &temp, &h2o, &co2, &LEDBrightness);
 		
         //_____SEND____
-        sendData(&lightReading, &temp, &h2o, &co2);
+        sendData(&lightReading, &temp, &h2o, &co2, &LEDBrightness);
 		
-		_delay_ms(500);
+		_delay_ms(2000);
 		
     }
 

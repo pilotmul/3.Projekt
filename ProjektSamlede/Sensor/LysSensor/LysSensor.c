@@ -7,6 +7,7 @@ void init_light()
 {
 	
 	//__________Init ADC__________
+	//ADC pin 4
 	ADMUX = (1 << REFS0); //Set refrence for ADC to AVcc
 	//Start ADC and set prescaler to 128
 	ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
