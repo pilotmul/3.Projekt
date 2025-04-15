@@ -4,7 +4,6 @@
 #include "Sensor/LysSensor/LysSensor.h"
 #include "mainFunctions.h"
 #include "uart.h"
-#include <avr/interrupt.h>
 #include <stdio.h>
 #include <util/delay.h>
 #include <stdbool.h>
@@ -12,29 +11,20 @@
 char* tempBuffer[256]; //Temp buffer
 char lightBuffer[100]; //Light buffer
 
-
-float co2 = 0, temp = 0, h2o = 0;
-int LEDBrightness = 0;
-bool windowOpen = false;
-bool motorAuto = true;
-bool lightAuto = true;
-
-int lightReading;
-
-ISR(USART0_RX_vect) 
-{
-	int data = UDR0;
-
-	handleReceived(data, &motorAuto, &lightAuto, &windowOpen, &targetTemp)
-}
-
 int main(void) 
 {
 	initSystem();
-	sei();
+    //Variables_delay_ms(2000);
+	float co2 = 0, temp = 0, h2o = 0, targetTemp = 25;
+	int LEDBrightness = 0;
+	bool windowOpen = false;
+	bool motorAuto = true;
+	bool lightAuto = true;
+	
+    int lightReading;
 	
 	
-    setTemperatureGoal(25.0);
+    setTemperatureGoal(targetTemp);
 	close();
 	
     //MAIN LOOP
@@ -45,10 +35,10 @@ int main(void)
         readData(&lightReading, &temp, &h2o, &co2);
 		
         //_____HANDLE_____
-        handleData(&lightReading, &temp, &h2o, &co2, &LEDBrightness);
+        handleData(&lightReading, &temp, &h2o, &co2, &LEDBrightness, &motorAuto, &targetTemp, &lightAuto);
 		
         //_____SEND____
-        sendData(&LEDBrightness, &temp, &h2o, &co2);
+        sendData(&LEDBrightness, &temp, &h2o, &co2, &windowOpen);
 		
 		_delay_ms(500);
 		
