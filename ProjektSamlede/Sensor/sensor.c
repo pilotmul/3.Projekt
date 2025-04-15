@@ -85,8 +85,8 @@ void scd30_init(void) {
 	send_cmd(0x0010, 0, 1); // start continuous measurement
 }
 
-void scd30_read(float *co2, float *temp, float *hum) {
-	if (!data_ready()) return 0;
+void scd30_read(float* co2, float* temp, float* hum) {
+	if (!data_ready()) return;
 
 	send_cmd(0x0300, 0, 0); // read measurement
 

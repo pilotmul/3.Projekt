@@ -19,7 +19,7 @@ static float setPoint = 50; // temperature goal in degrees celcius
 float time = 0;
 
 void initTempRegulator(){
-    InitUART(9600, 8, 1);
+    
     initPWM();
 
     //Initialize PI controller

@@ -44,6 +44,7 @@ void initSystem()
     scd30_init();
     init_light();
     servo_init();
+	InitUART(9600, 8, 1);
 }
 
 

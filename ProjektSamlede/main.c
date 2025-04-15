@@ -3,6 +3,7 @@
 #include "Varmelegeme/temperatureRegulator.h"
 #include "Sensor/LysSensor/LysSensor.h"
 #include "mainFunctions.h"
+#include "uart.h"
 #include <stdio.h>
 #include <util/delay.h>
 
@@ -17,7 +18,8 @@ int main(void)
 	
     int lightReading;
 	
-    setTemperatureGoal(50);
+	
+    setTemperatureGoal(50.0);
 	close();
 	
     //MAIN LOOP
@@ -32,6 +34,8 @@ int main(void)
 		
         //_____SEND____
         sendData(&lightReading, &temp, &h2o, &co2);
+		
+		_delay_ms(500);
 		
     }
 

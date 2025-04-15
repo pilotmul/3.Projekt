@@ -18,7 +18,7 @@ void initPWM()
 	TCCR1B = 0b00110011;//prescaler 64, 1.2KHz
 	ICR1 = 200;//TOP = 200
 	OCR1A = 0;
-	DDRB = 0xFF;
+	DDRB |=(1<<PB5);
 }
 
 void incPW()
