@@ -2,6 +2,7 @@
 #include "Motor/motor.h"
 #include "Varmelegeme/temperatureRegulator.h"
 #include "Sensor/LysSensor/LysSensor.h"
+#include "uart.h"
 #include <stdio.h>
 
 bool motorAuto = true;
