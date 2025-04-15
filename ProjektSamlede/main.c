@@ -34,7 +34,7 @@ int main(void)
         handleData(&lightReading, &temp, &h2o, &co2, &LEDBrightness);
 		
         //_____SEND____
-        sendData(&lightReading, &temp, &h2o, &co2, &LEDBrightness);
+        sendData(&LEDBrightness, &temp, &h2o, &co2);
 		
 		_delay_ms(2000);
 		

@@ -14,4 +14,4 @@ void readData(int* lightReading, float* temp, float* h2o, float* co2);
 
 void handleData(int* lightReading, float* temp, float* h2o, float* co2, int* LEDBrightness);
 
-void sendData(int* lightReading, float* temp, float* h2o, float* co2, int* LEDBrightness);
+void sendData(int* LEDBrightness, float* temp, float* h2o, float* co2);

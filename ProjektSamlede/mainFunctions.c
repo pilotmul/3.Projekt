@@ -84,7 +84,7 @@ void handleData(int* lightReading, float* temp, float* h2o, float* co2, int* LED
     regulateTemperature(*temp);
 }
 
-void sendData(int* lightReading, float* temp, float* h2o, float* co2, int* LEDBrightness)
+void sendData(int* LEDBrightness, float* temp, float* h2o, float* co2)
 {
 	char String[20];
 
@@ -94,11 +94,7 @@ void sendData(int* lightReading, float* temp, float* h2o, float* co2, int* LEDBr
 	sprintf(String, "%f", *temp);
 	SendString(String);
 
-	//Send light
-	SendString("\nLight Reading | low = bright \n");
-	sprintf(String, "%d", *lightReading);
-	SendString(String);
-	
+	//Send light	
 	SendString("\nLED Brightness\n");
 	sprintf(String, "%d", *LEDBrightness);
 	SendString(String);
