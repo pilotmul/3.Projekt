@@ -6,17 +6,23 @@
 #include <math.h>
 #include <stdio.h>
 
-
-
-
-
 void handleReceived(int val, bool* motorAuto, bool* lightAuto, bool* windowOpen, float* targetTemp)
 {
     switch (floor(val/100))
     {
     case 1: //Toggle motor and set mode manual
-        
-        *motorAuto = false;
+	
+		if(*motorAuto) //Set mode manual
+		{
+			*motorAuto = false;
+		}
+		
+        if(*windowOpen) //Toggle window
+        {
+			open();
+	        break;
+        }
+        close();
         break;
     
     case 2: //Toggle motor control mode
@@ -30,6 +36,7 @@ void handleReceived(int val, bool* motorAuto, bool* lightAuto, bool* windowOpen,
 	
 	case 3: //Set target temp
 		*targetTemp = val%100;
+		setTemperatureGoal(*targetTemp);
 		break;
 	
 	case 4: //Toggle light control mode
