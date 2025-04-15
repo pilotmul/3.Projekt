@@ -59,20 +59,23 @@ void readData(int* lightReading, float* temp, float* h2o, float* co2)
     
 }
 
-void handleData(int* lightReading, float* temp, float* h2o, float* co2, int* LEDBrightness)
+void handleData(int* lightReading, float* temp, float* h2o, float* co2, int* LEDBrightness, bool* windowOpen)
 {
-   
+   if(motorAuto)
+   {
         if(*temp>targetTemp+3 || *h2o>60.0 || *co2>1000) //Check for value limits
         {
             //Åben vindue
+			*windowOpen=true;
             open();
         }
         else
         {
             //luk vindue
+			*windowOpen=false;
             close();
         }
-   
+   }
 
     //_____LIGHT_____
     if(lightAuto) //Check for auto control mode
@@ -84,7 +87,7 @@ void handleData(int* lightReading, float* temp, float* h2o, float* co2, int* LED
     regulateTemperature(*temp);
 }
 
-void sendData(int* lightReading, float* temp, float* h2o, float* co2, int* LEDBrightness)
+void sendData(int* lightReading, float* temp, float* h2o, float* co2, int* LEDBrightness, bool* windowOpen)
 {
 	char String[20];
 
@@ -113,4 +116,14 @@ void sendData(int* lightReading, float* temp, float* h2o, float* co2, int* LEDBr
 	sprintf(String, "%f", *h2o);
 	SendString(String);
 	SendString("\nREADING END\n");
+	
+	//Send window state
+	if (windowOpen)
+	{
+		SendInteger(1);
+	}
+	else
+	{
+		SendInteger(0);
+	}
 }
