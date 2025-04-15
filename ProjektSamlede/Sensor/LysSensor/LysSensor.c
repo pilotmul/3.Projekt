@@ -48,9 +48,8 @@ int SetLEDBrightness(int lightReading)
 		lightReading = 1000;
 	}
 	
-	int brightness = lightReading / 4; //Roughly converts to 8bit
-	
-	OCR2A = brightness; //Sets LED brightness
+	int brightness = (lightReading * 255) / 1000;
+	OCR2A = brightness;
 	
 	int percentage = lightReading/10;
 	
