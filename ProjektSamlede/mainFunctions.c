@@ -6,47 +6,46 @@
 #include <math.h>
 #include <stdio.h>
 
-bool motorAuto = true;
-bool lightAuto = true;
 
-float targetTemp = 21;
 
-void handleReceived(int val)
+
+
+void handleReceived(int val, bool* motorAuto, bool* lightAuto, bool* windowOpen, float* targetTemp)
 {
     switch (floor(val/100))
     {
     case 1: //Toggle motor and set mode manual
         
-        motorAuto = false;
+        *motorAuto = false;
         break;
     
     case 2: //Toggle motor control mode
-		if(motorAuto)
+		if(*motorAuto)
 		{
-			motorAuto = false;
+			*motorAuto = false;
 			break;
 		}
-		motorAuto = true;
+		*motorAuto = true;
 		break;
 	
 	case 3: //Set target temp
-		targetTemp = val%100;
+		*targetTemp = val%100;
 		break;
 	
 	case 4: //Toggle light control mode
 		
-		if(lightAuto)
+		if(*lightAuto)
 		{
-			lightAuto = false;
+			*lightAuto = false;
 			break;
 		}
 		//else
-		lightAuto = true;
+		*lightAuto = true;
 		break;
 		
 	case 5: //Set brightness and set mode manual
 		SetLEDBrightness(val%100);
-		lightAuto = false;
+		*lightAuto = false;
 		break;
     
     default:
@@ -74,11 +73,11 @@ void readData(int* lightReading, float* temp, float* h2o, float* co2)
     
 }
 
-void handleData(int* lightReading, float* temp, float* h2o, float* co2, int* LEDBrightness)
+void handleData(int* lightReading, float* temp, float* h2o, float* co2, int* LEDBrightness, bool* motorAuto, int* targetTemp, bool* lightAuto )
 {
-   if(motorAuto)
+   if(*motorAuto)
    {
-        if(*temp>targetTemp+3 || *h2o>60.0 || *co2>1000) //Check for value limits
+        if(*temp>*targetTemp+3 || *h2o>60.0 || *co2>1000) //Check for value limits
         {
             //Åben vindue
             open();
@@ -91,7 +90,7 @@ void handleData(int* lightReading, float* temp, float* h2o, float* co2, int* LED
    }
 
     //_____LIGHT_____
-    if(lightAuto) //Check for auto control mode
+    if(*lightAuto) //Check for auto control mode
     {
 		*LEDBrightness = SetLEDBrightness(*lightReading); //Set brightness
     }
@@ -100,7 +99,7 @@ void handleData(int* lightReading, float* temp, float* h2o, float* co2, int* LED
     regulateTemperature(*temp);
 }
 
-void sendData(int* LEDBrightness, float* temp, float* h2o, float* co2)
+void sendData(int* LEDBrightness, float* temp, float* h2o, float* co2, bool* windowOpen)
 {
 	char String[20];
 
@@ -125,4 +124,14 @@ void sendData(int* LEDBrightness, float* temp, float* h2o, float* co2)
 	sprintf(String, "%f", *h2o);
 	SendString(String);
 	SendString("\nREADING END\n");
+	
+	//Send windowState
+	if (windowOpen)
+	{
+		SendInteger(1);
+	}
+	else
+	{
+		SendInteger(0);
+	}
 }

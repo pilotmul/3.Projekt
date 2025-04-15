@@ -18,6 +18,8 @@ int main(void)
 	float co2 = 0, temp = 0, h2o = 0;
 	int LEDBrightness = 0;
 	bool windowOpen = false;
+	bool motorAuto = true;
+	bool lightAuto = true;
 	
     int lightReading;
 	
@@ -38,7 +40,7 @@ int main(void)
         //_____SEND____
         sendData(&LEDBrightness, &temp, &h2o, &co2);
 		
-		_delay_ms(2000);
+		_delay_ms(500);
 		
     }
 
