@@ -95,7 +95,7 @@ void sendData(int* lightReading, float* temp, float* h2o, float* co2, int* LEDBr
 	SendString(String);
 
 	//Send light
-	SendString("\nAmbient light \n");
+	SendString("\nLight Reading | low = bright \n");
 	sprintf(String, "%d", *lightReading);
 	SendString(String);
 	
