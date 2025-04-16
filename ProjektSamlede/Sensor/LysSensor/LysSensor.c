@@ -55,3 +55,22 @@ int SetLEDBrightness(int lightReading)
 	
 	return percentage; //Return percentage of brightness
 }
+
+int SetLEDBrightnessProcent(int lightVal)
+{
+	//Ensure reading is within bounds
+	if(lightVal < 0) //If too small
+	{
+		lightVal = 0;
+	}
+	if (lightVal > 100) //If too large
+	{
+		lightVal = 1000;
+	}
+	
+	int brightness = (255/100) *lightVal;
+	OCR2A = brightness;
+	
+
+	return brightness; //Return percentage of brightness
+}

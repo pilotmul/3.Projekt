@@ -7,13 +7,14 @@
 #include <stdio.h>
 #include <util/delay.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 char* tempBuffer[256]; //Temp buffer
 char lightBuffer[100]; //Light buffer
 
 
-float co2 = 0, temp = 0, h2o = 0, targetTemp = 25;
-int LEDBrightness = 0;
+float co2 = 0, temp = 0, h2o = 0, targetTemp = 21;
+int LEDBrightness = 50;
 bool windowOpen = false;
 bool motorAuto = true;
 bool lightAuto = true;
@@ -27,6 +28,7 @@ uint8_t valueReady = 0;
 
 ISR(USART0_RX_vect)
 {
+	
 	char receivedChar = UDR0;
 	
 	if(receivedChar == '\n')
@@ -35,16 +37,15 @@ ISR(USART0_RX_vect)
 		receivedValue = atoi((char*)uartBuffer);
 		valueReady = 1;
 		uartIndex = 0;
+		SendString("\nINTERRUPT!\n");
+		SendInteger(receivedValue);
+		handleReceived(receivedValue, &motorAuto, &lightAuto, &windowOpen, &targetTemp, &LEDBrightness);
 	}
-	else if(uartIndex < sizeof((uartBuffer) - 1))
+	else if(uartIndex < sizeof(uartBuffer) - 1)
 	{
 		uartBuffer[uartIndex++] = receivedChar;
 	}
 	
-	SendString("\nINTERRUPT!\n");
-	SendString("\nValue recieved\n");
-	SendInteger(receivedValue);
-	handleReceived(receivedValue, &motorAuto, &lightAuto, &windowOpen, &targetTemp);
 }
 
 int main(void) 
@@ -68,7 +69,7 @@ int main(void)
         //_____SEND____
         sendData(&LEDBrightness, &temp, &h2o, &co2, &windowOpen);
 		
-		_delay_ms(500);
+		_delay_ms(1000);
 		
     }
 

@@ -2,7 +2,7 @@
 /***************************************************************/
 // OBS, der skal være en implimenteret float2char() funktion    /
 // i uart.h for at nogen af print funktionerne virker.          /
-// PWM BRUGER PIN 11                                            /
+// PWM BRUGER PIN 5                                            /
 // SCD30 sensor bruger SCL(hvid) -> PIN 21, SDA(gul) -> PIN 20  /
 //                                                              /
 // initTempRegulator() skal kaldes i starten af programmet.     /
