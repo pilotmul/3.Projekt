@@ -6,6 +6,7 @@
 #include <math.h>
 #include <stdio.h>
 #include "avr/delay.h"
+#include "Varmelegeme/PWM.h"
 
 void handleReceived(int val, bool* motorAuto, bool* lightAuto, bool* windowOpen, float* targetTemp, int* LEDBrightness)
 {
@@ -71,43 +72,47 @@ void handleReceived(int val, bool* motorAuto, bool* lightAuto, bool* windowOpen,
 		*lightAuto = false;
 		break;
     
-	case 6: //Test function of components 
-	cli();
+	
+
+	case 6: //Test function of components
+		cli();
 		//Testing window
 		SendString("Testing window\n");
+		_delay_ms(2000);
 		open();
 		_delay_ms(1500);
 		close();
 		_delay_ms(500);
 		SendString("Window test complete\n");
 		_delay_ms(1500);
-		
+
 		//Testing light
 		SendString("Testing light\n");
-		for(int i = 0; i<100; i+=5)
+		for(int i = 0; i<100; i++)
 		{
 			SetLEDBrightnessProcent(i);
-			_delay_ms(500);
+			_delay_ms(100);
 		}
 		_delay_ms(1000);
-		for(int i = 100; i>0; i-=5)
+		for(int i = 100; i>0; i--)
 		{
 			SetLEDBrightnessProcent(i);
-			_delay_ms(500);
+			_delay_ms(100);
 		}
 		_delay_ms(1000);
-		SendString("Testing complete\n");
+		SendString("Light test complete\n");
 		_delay_ms(1500);
-		
+
 		//Testing heatmat
 		SendString("Testing heatmat at full power\n");
-		setTemperatureGoal(100);
+		setPW(100);
 		_delay_ms(15000);
-		SendString("Testing complete. Setting heatmat to 21\n");
-		setTemperatureGoal(21);
+		SendString("Testing complete. Setting heatmat to 0\n");
+		setPW(0);
 		SendString("Entire test complete\n");
 		_delay_ms(2000);
 		sei();
+	
     default:
         break;
     }

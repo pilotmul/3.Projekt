@@ -13,7 +13,7 @@ char* tempBuffer[256]; //Temp buffer
 char lightBuffer[100]; //Light buffer
 
 
-float co2 = 0, temp = 0, h2o = 0, targetTemp = 21;
+float co2 = 0, temp = 0, h2o = 0, targetTemp = 25;
 int LEDBrightness = 50;
 bool windowOpen = false;
 bool motorAuto = true;
@@ -55,6 +55,7 @@ int main(void)
 	
     setTemperatureGoal(targetTemp);
 	close();
+
 	
     //MAIN LOOP
     while(1)
@@ -63,11 +64,14 @@ int main(void)
         //_____READ_____
         readData(&lightReading, &temp, &h2o, &co2);
 		
+		
         //_____HANDLE_____
         handleData(&lightReading, &temp, &h2o, &co2, &LEDBrightness, &motorAuto, &targetTemp, &lightAuto);
 		
+		
         //_____SEND____
         sendData(&LEDBrightness, &temp, &h2o, &co2, &windowOpen);
+		
 		
 		_delay_ms(1000);
 		
