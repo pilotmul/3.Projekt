@@ -13,89 +13,54 @@
     }
     label, input, button { margin: 5px 0; display: block; }
     .hidden { display: none; }
+    .status-box { font-weight: bold; margin-top: 5px; }
   </style>
 </head>
 <body>
   <h1>Smart Kontrolpanel</h1>
 
-  <h3>Styring</h3>
-  <button onclick="toggleWindow()">Toggle vindue</button>
-  <button onclick="toggleAutoMode('WINDOW')" id="window-btn">Sæt til MANUEL</button>
-  <p>Status: <span id="window-mode">AUTO</span></p>
+  <h3>Vindue</h3>
+  <button onclick="toggleWindow()">Skift vindue</button>
+  <button onclick="setAuto('WINDOW')">Sæt til AUTO</button>
+  <div class="status-box">Status: <span id="window-mode">AUTO</span></div>
 
   <hr>
-  <label>Indstil temperatur (°C):</label>
-  <input type="number" id="temp-input" placeholder="f.eks. 22">
+  <h3>Temperatur</h3>
+  <input type="number" id="temp-input" value="21" placeholder="f.eks. 22">
   <button onclick="sendTemp()">Send temperatur</button>
-  <button onclick="toggleAutoMode('TEMP')" id="temp-btn">Sæt til MANUEL</button>
-  <p>Status: <span id="temp-mode">AUTO</span></p>
 
-  <label>Lysstyrke (%):</label>
+  <hr>
+  <h3>Lys</h3>
   <input type="number" id="light-input" placeholder="f.eks. 75">
   <button onclick="sendLight()">Send lys</button>
-  <button onclick="toggleAutoMode('LIGHT')" id="light-btn">Sæt til MANUEL</button>
-  <p>Status: <span id="light-mode">AUTO</span></p>
+  <button onclick="setAuto('LIGHT')">Sæt til AUTO</button>
+  <div class="status-box">Status: <span id="light-mode">AUTO</span></div>
 
   <hr>
   <h3>Live målinger</h3>
-  <p>Temperatur: <span id="temp-value">---</span> °C</p>
+  <p>Temperatur – Sat: <span id="temp-set">25</span> °C | Målt: <span id="temp-value">---</span> °C</p>
   <p>Lysstyrke: <span id="light-value">---</span> %</p>
   <p>CO₂: <span id="co2-value">---</span> ppm</p>
   <p>Fugtighed: <span id="humidity-value">---</span> %</p>
 
   <hr>
-  <button onclick="toggleTekniker()">Vis teknikermenu</button>
+  <button onclick="toggleTekniker()">Vis/Skjul teknikermenu</button>
   <div id="tekniker-box" class="hidden">
     <h3>Teknikermenu</h3>
-    <button onclick="toggleDataFlow()">Stop/Start datastrøm</button>
+    <button onclick="runTest()">🧪 Kør systemtest</button>
     <pre id="tekniker-log"></pre>
   </div>
 
   <script>
-    const socket = io();
+    const socket = io({ transports: ['websocket'] });
     let teknikVises = false;
-    let dataFlowActive = true;
-    let modes = { TEMP: "AUTO", LIGHT: "AUTO", WINDOW: "AUTO" };
+    let mode = { TEMP: "AUTO", LIGHT: "AUTO", WINDOW: "AUTO" };
     let pendingLabel = null;
 
-    function updateMode(sensor, mode) {
-      modes[sensor] = mode;
-      document.getElementById(sensor.toLowerCase() + "-mode").textContent = mode;
-      const btn = document.getElementById(sensor.toLowerCase() + "-btn");
-      if (btn) {
-        btn.textContent = (mode === "AUTO") ? "Sæt til MANUEL" : "Sæt til AUTO";
-      }
-    }
-
-    function toggleAutoMode(sensor) {
-      if (modes[sensor] === "AUTO") {
-        updateMode(sensor, "MANUAL");
-      } else {
-        socket.emit('control', { [sensor.toLowerCase()]: 'AUTO' });
-        updateMode(sensor, "AUTO");
-      }
-    }
-
-    function toggleWindow() {
-      socket.emit('control', { window: "TOGGLE" });
-      updateMode('WINDOW', 'MANUAL');
-    }
-
-    function sendTemp() {
-      const val = document.getElementById("temp-input").value;
-      if (val) {
-        socket.emit('control', { temperature: val });
-        updateMode('TEMP', 'MANUAL');
-      }
-    }
-
-    function sendLight() {
-      let val = parseInt(document.getElementById("light-input").value);
-      if (!isNaN(val)) {
-        if (val > 99) val = 99;
-        socket.emit('control', { light: val.toString() });
-        updateMode('LIGHT', 'MANUAL');
-      }
+    function updateMode(sensor, value) {
+      mode[sensor] = value;
+      const el = document.getElementById(sensor.toLowerCase() + "-mode");
+      if (el) el.textContent = value;
     }
 
     function toggleTekniker() {
@@ -103,9 +68,36 @@
       document.getElementById("tekniker-box").classList.toggle("hidden", !teknikVises);
     }
 
-    function toggleDataFlow() {
-      dataFlowActive = !dataFlowActive;
-      socket.emit('control', { toggle_stream: true });
+    function setAuto(sensor) {
+      socket.emit("control", { [sensor.toLowerCase()]: "AUTO" });
+      updateMode(sensor, "AUTO");
+    }
+
+    function toggleWindow() {
+      socket.emit("control", { window: "TOGGLE" });
+      updateMode("WINDOW", "MANUAL");
+    }
+
+    function sendTemp() {
+      const val = document.getElementById("temp-input").value;
+      if (val) {
+        socket.emit("control", { temperature: val });
+        updateMode("TEMP", "MANUAL");
+        document.getElementById("temp-set").textContent = val;
+      }
+    }
+
+    function sendLight() {
+      const val = document.getElementById("light-input").value;
+      if (val) {
+        socket.emit("control", { light: val });
+        updateMode("LIGHT", "MANUAL");
+      }
+    }
+
+    function runTest() {
+      socket.emit("control", { test: "ALL" });
+      logTekniker("🧪 Systemtest sendt til backend");
     }
 
     function logTekniker(msg) {
@@ -115,13 +107,19 @@
       log.scrollTop = log.scrollHeight;
     }
 
-    socket.on('uart_response', data => {
+    socket.on("feedback", data => {
+      logTekniker("✔️ " + data.status);
+    });
+
+    socket.on("auto_mode_update", data => {
+      updateMode(data.sensor, data.mode);
+    });
+
+    socket.on("uart_response", data => {
       const line = data.response.trim();
-      logTekniker("MODTAG <- " + line);
+      logTekniker("🔄 MEGA: " + line);
 
-      // Genkend labels og brug næste linje som værdi
       const l = line.toLowerCase();
-
       if (["temp", "led brightness", "co2", "humidity"].includes(l)) {
         pendingLabel = l;
         return;
@@ -144,14 +142,6 @@
         }
         pendingLabel = null;
       }
-    });
-
-    socket.on('auto_mode_update', data => {
-      updateMode(data.sensor, data.mode);
-    });
-
-    socket.on('feedback', data => {
-      logTekniker("✔️ Feedback: " + data.status);
     });
   </script>
 </body>
