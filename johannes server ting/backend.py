@@ -132,3 +132,4 @@ if uart_connected:
 if __name__ == '__main__':
     print("[Main] Starter Flask server...")
     socketio.run(app, host='0.0.0.0', port=5000)
+
