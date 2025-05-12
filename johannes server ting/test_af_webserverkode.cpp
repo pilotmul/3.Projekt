@@ -1,5 +1,3 @@
-// === Arduino MEGA (fuld version med PING, setpunkter og målinger) ===
-
 #define F_CPU 16000000UL
 #define BAUD 9600
 #include <avr/io.h>
@@ -82,11 +80,12 @@ void send_fake_sensor_data() {
 	uart_send_string("HUMIDITY:");
 	uart_send_string(str);
 	uart_send_string("\n");
+
 	if (window_state == 0) {
 		uart_send_string("WINDOW:AUTO\n");
-		} else if (window_state == 1) {
+	} else if (window_state == 1) {
 		uart_send_string("WINDOW:OPEN\n");
-		} else if (window_state == 2) {
+	} else if (window_state == 2) {
 		uart_send_string("WINDOW:CLOSED\n");
 	}
 }
@@ -157,24 +156,12 @@ void process_command(const char* buffer) {
 		uart_send_string(buffer);
 		uart_send_string("\n");
 	}
-	else if (strcmp(buffer, "OPEN") == 0) {
-		window_state = 1;
-		uart_send_string("Vindue kommando: OPEN\n");
-	}
-	else if (strcmp(buffer, "CLOSE") == 0) {
-		window_state = 2;
-		uart_send_string("Vindue kommando: CLOSE\n");
-	}
-	else if (strcmp(buffer, "WINDOW:AUTO") == 0) {
-		window_state = 0;
-		uart_send_string("Vindue sat til AUTO\n");
-	}
 }
 
 int connected = 0;
 
 int main(void) {
-	uart_init(103); // 9600 baud @ 16 MHz
+	uart_init(103);
 	srand(42);
 	char buffer[64];
 
@@ -182,13 +169,10 @@ int main(void) {
 		if (UCSR1A & (1 << RXC1)) {
 			uart_receive_line(buffer, sizeof(buffer));
 			process_command(buffer);
-
-			// Hvis PING? modtages, sæt connected-flag
 			if (strcmp(buffer, "PING?") == 0) {
 				connected = 1;
 			}
 		}
-
 		if (connected) {
 			send_fake_sensor_data();
 			_delay_ms(2000);
