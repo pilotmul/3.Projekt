@@ -92,70 +92,79 @@ void send_fake_sensor_data() {
 
 // Håndter tekstkommandoer fra Pi
 void process_command(const char* buffer) {
-	char str[20];
+    char str[20];
 
-	if (strcmp(buffer, "PING?") == 0) {
-		uart_send_string("PONG\n");
-	}
-	else if (strcmp(buffer, "TEMP:TEST") == 0) {
-		dtostrf(set_temp, 4, 1, str);
-		uart_send_string("TEMP:");
-		uart_send_string(str);
-		uart_send_string("\n");
-	}
-	else if (strcmp(buffer, "LIGHT:TEST") == 0) {
-		itoa(set_light, str, 10);
-		uart_send_string("LIGHT:");
-		uart_send_string(str);
-		uart_send_string("\n");
-	}
-	else if (strcmp(buffer, "CO2?") == 0) {
-		itoa(random_int(400, 800), str, 10);
-		uart_send_string("CO2:");
-		uart_send_string(str);
-		uart_send_string("\n");
-	}
-	else if (strcmp(buffer, "HUMIDITY?") == 0) {
-		itoa(random_int(30, 70), str, 10);
-		uart_send_string("HUMIDITY:");
-		uart_send_string(str);
-		uart_send_string("\n");
-	}
-	else if (strcmp(buffer, "TEMP:AUTO") == 0) {
-		uart_send_string("Temperatur sat til AUTO\n");
-	}
-	else if (strcmp(buffer, "LIGHT:AUTO") == 0) {
-		uart_send_string("Lys sat til AUTO\n");
-	}
-	else if (strcmp(buffer, "OPEN") == 0) {
-		window_state = 1;
-		uart_send_string("Vindue kommando: OPEN\n");
-	}
-	else if (strcmp(buffer, "CLOSE") == 0) {
-		window_state = 2;
-		uart_send_string("Vindue kommando: CLOSE\n");
-	}
-	else if (strcmp(buffer, "WINDOW:AUTO") == 0) {
-		window_state = 0;
-		uart_send_string("Vindue sat til AUTO\n");
-	}
-	else if (strncmp(buffer, "TEMP:", 5) == 0) {
-		set_temp = atof(buffer + 5);
-		uart_send_string("Modtaget TEMP-ønske: ");
-		uart_send_string(buffer + 5);
-		uart_send_string("\n");
-	}
-	else if (strncmp(buffer, "LIGHT:", 6) == 0) {
-		set_light = atoi(buffer + 6);
-		uart_send_string("Modtaget LIGHT-ønske: ");
-		uart_send_string(buffer + 6);
-		uart_send_string("\n");
-	}
-	else {
-		uart_send_string("Ukendt kommando: ");
-		uart_send_string(buffer);
-		uart_send_string("\n");
-	}
+    if (strcmp(buffer, "600") == 0) {
+        uart_send_string("MEGA: READING START\n");
+
+        send_fake_sensor_data();  // Fake målinger til test
+
+        uart_send_string("MEGA: READING END\n");
+        return;
+    }
+
+    if (strcmp(buffer, "PING?") == 0) {
+        uart_send_string("PONG\n");
+    }
+    else if (strcmp(buffer, "TEMP:TEST") == 0) {
+        dtostrf(set_temp, 4, 1, str);
+        uart_send_string("TEMP:");
+        uart_send_string(str);
+        uart_send_string("\n");
+    }
+    else if (strcmp(buffer, "LIGHT:TEST") == 0) {
+        itoa(set_light, str, 10);
+        uart_send_string("LIGHT:");
+        uart_send_string(str);
+        uart_send_string("\n");
+    }
+    else if (strcmp(buffer, "CO2?") == 0) {
+        itoa(random_int(400, 800), str, 10);
+        uart_send_string("CO2:");
+        uart_send_string(str);
+        uart_send_string("\n");
+    }
+    else if (strcmp(buffer, "HUMIDITY?") == 0) {
+        itoa(random_int(30, 70), str, 10);
+        uart_send_string("HUMIDITY:");
+        uart_send_string(str);
+        uart_send_string("\n");
+    }
+    else if (strcmp(buffer, "TEMP:AUTO") == 0) {
+        uart_send_string("Temperatur sat til AUTO\n");
+    }
+    else if (strcmp(buffer, "LIGHT:AUTO") == 0) {
+        uart_send_string("Lys sat til AUTO\n");
+    }
+    else if (strcmp(buffer, "OPEN") == 0) {
+        window_state = 1;
+        uart_send_string("Vindue kommando: OPEN\n");
+    }
+    else if (strcmp(buffer, "CLOSE") == 0) {
+        window_state = 2;
+        uart_send_string("Vindue kommando: CLOSE\n");
+    }
+    else if (strcmp(buffer, "WINDOW:AUTO") == 0) {
+        window_state = 0;
+        uart_send_string("Vindue sat til AUTO\n");
+    }
+    else if (strncmp(buffer, "TEMP:", 5) == 0) {
+        set_temp = atof(buffer + 5);
+        uart_send_string("Modtaget TEMP-ønske: ");
+        uart_send_string(buffer + 5);
+        uart_send_string("\n");
+    }
+    else if (strncmp(buffer, "LIGHT:", 6) == 0) {
+        set_light = atoi(buffer + 6);
+        uart_send_string("Modtaget LIGHT-ønske: ");
+        uart_send_string(buffer + 6);
+        uart_send_string("\n");
+    }
+    else {
+        uart_send_string("Ukendt kommando: ");
+        uart_send_string(buffer);
+        uart_send_string("\n");
+    }
 }
 
 int connected = 0;
