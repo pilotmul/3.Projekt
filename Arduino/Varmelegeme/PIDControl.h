@@ -1,14 +1,4 @@
-/* ========================================
- *
- * Copyright YOUR COMPANY, THE YEAR
- * All Rights Reserved
- * UNPUBLISHED, LICENSED SOFTWARE.
- *
- * CONFIDENTIAL AND PROPRIETARY INFORMATION
- * WHICH IS THE PROPERTY OF your company.
- *
- * ========================================
-*/
+
 
 #ifndef PID_CONTROL_H
 #define PID_CONTROL_H
@@ -45,5 +35,3 @@ float PIDControl_doStep(float systemOutput, float* proportionalPart, float* inte
 float get_setPoint();
 
 #endif // PID_CONTROL_H
-
-/* [] END OF FILE */
